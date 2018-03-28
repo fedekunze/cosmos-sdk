@@ -262,9 +262,48 @@ func TestGetValidators(t *testing.T) {
 // TODO
 // test the mechanism which keeps track of a validator set change
 func TestGetAccUpdateValidators(t *testing.T) {
+	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	amts := []int64{0, 300}
+	candidates := make([]Candidate, len(amts))
+	validators := make([]Validator, len(amts))
+	for i := 0; i < len(amts); i++ {
+		c := Candidate{
+			Status:      Unbonded,
+			PubKey:      pks[i],
+			Address:     addrs[i],
+			Assets:      sdk.NewRat(amts[i]),
+			Liabilities: sdk.NewRat(amts[i]),
+		}
+		v := Validator{
+			Address: addrs[i],
+			VotingPower: 
+		}
+		candidates[i] = c
+		validators[i]
+	}
+
 	//TODO
 	// test from nothing to something
+	validators := keeper.getAccUpdateValidators(ctx)
+	assert.Equal(t, 0, len(validators))
+	keeper.setCandidate(ctx, candidates[0])
+	keeper.setCandidate(ctx, candidates[1])
+	validators = keeper.getAccUpdateValidators(ctx)
+	assert.Equal(t, 2, len(validators))
+	assert.Equal(t, candidates[0], validators[0])
+	assert.Equal(t, candidates[1], validators[1])
+
+	keeper.clearAccUpdateValidators(ctx)
+	validators = keeper.getAccUpdateValidators(ctx)
+	assert.Equal(t, 0, len(validators))
+
 	// test from something to nothing
+	keeper.removeCandidate(ctx, c[0].Address)
+	keeper.removeCandidate(ctx, c[1].Address)
+	validators = keeper.getAccUpdateValidators(ctx)
+	assert.Equal(t, 2, len(validators))
+	assert.Equal(t, candidates[0], validators[])
+
 	// test identical
 	// test single value change
 	// test multiple value change
