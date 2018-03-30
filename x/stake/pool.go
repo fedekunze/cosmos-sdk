@@ -51,7 +51,7 @@ func (p Pool) unbondedToBondedPool(candidate Candidate) (Pool, Candidate) {
 //_______________________________________________________________________
 
 func (p Pool) addTokensBonded(amount int64) (p2 Pool, issuedShares sdk.Rat) {
-	issuedShares = p.bondedShareExRate().Inv().Mul(sdk.NewRat(amount)) // (tokens/shares)^-1 * tokens
+	issuedShares = sdk.NewRat(amount).Quo(p.bondedShareExRate()) // (tokens/shares)^-1 * tokens
 	p.BondedPool += amount
 	p.BondedShares = p.BondedShares.Add(issuedShares)
 	return p, issuedShares
@@ -84,6 +84,8 @@ func (p Pool) removeSharesUnbonded(shares sdk.Rat) (p2 Pool, removedTokens int64
 func (p Pool) candidateAddTokens(candidate Candidate,
 	amount int64) (p2 Pool, candidate2 Candidate, issuedDelegatorShares sdk.Rat) {
 
+	exRate := candidate.delegatorShareExRate()
+
 	var receivedGlobalShares sdk.Rat
 	if candidate.Status == Bonded {
 		p, receivedGlobalShares = p.addTokensBonded(amount)
@@ -92,7 +94,6 @@ func (p Pool) candidateAddTokens(candidate Candidate,
 	}
 	candidate.Assets = candidate.Assets.Add(receivedGlobalShares)
 
-	exRate := candidate.delegatorShareExRate()
 	issuedDelegatorShares = exRate.Mul(receivedGlobalShares)
 	candidate.Liabilities = candidate.Liabilities.Add(issuedDelegatorShares)
 
