@@ -270,7 +270,7 @@ func TestGetValidators(t *testing.T) {
 func TestGetAccUpdateValidators(t *testing.T) {
 	ctx, _, keeper := createTestInput(t, nil, false, 0)
 	params := defaultParams()
-	params.MaxValidators = 3
+	params.MaxValidators = 4
 	keeper.setParams(ctx, params)
 
 	amts := []int64{9, 8, 7, 10, 6}
@@ -361,18 +361,29 @@ func TestGetAccUpdateValidators(t *testing.T) {
 	keeper.setCandidate(ctx, candidates[2])
 	keeper.setCandidate(ctx, candidates[3])
 	acc = keeper.getAccUpdateValidators(ctx)
-	validatorsEqual(t, validators, acc)
+	require.Equal(t, 4, len(acc))
+	candidates = keeper.GetCandidates(ctx, 5)
+	require.Equal(t, 3, len(candidates))
+	assert.Equal(t, candidates[0].validator(), acc[0])
+	assert.Equal(t, candidates[1].validator(), acc[1])
+	assert.Equal(t, candidates[2].validator(), acc[2])
+	assert.Equal(t, candidates[3].validator(), acc[3])
 
-	// test validator added at the end
+	// test candidate(not validator) added at the end
 	candidates = append(candidates, candidatesIn[4])
-	validators = genValidators(candidates)
 	keeper.setCandidate(ctx, candidates[0])
 	keeper.setCandidate(ctx, candidates[1])
 	keeper.setCandidate(ctx, candidates[2])
 	keeper.setCandidate(ctx, candidates[3])
 	keeper.setCandidate(ctx, candidates[4])
 	acc = keeper.getAccUpdateValidators(ctx)
-	validatorsEqual(t, validators, acc)
+	require.Equal(t)
+	assert.Equal(t, candidates[0].validator(), acc[0])
+	assert.Equal(t, candidates[1].validator(), acc[1])
+	assert.Equal(t, candidates[2].validator(), acc[2])
+	assert.Equal(t, candidates[3].validator(), acc[3])
+	assert.Equal(t, candidates[4].validator(), acc[4])
+
 }
 
 // clear the tracked changes to the validator set
