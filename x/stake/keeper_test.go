@@ -43,7 +43,7 @@ var (
 
 // This function tests GetCandidate, GetCandidates, setCandidate, removeCandidate
 func TestCandidate(t *testing.T) {
-	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	ctx, _, keeper := createTestInput(t, false, 0)
 
 	candidatesEqual := func(c1, c2 Candidate) bool {
 		return c1.Status == c2.Status &&
@@ -101,7 +101,7 @@ func TestCandidate(t *testing.T) {
 
 // tests GetDelegatorBond, GetDelegatorBonds, SetDelegatorBond, removeDelegatorBond
 func TestBond(t *testing.T) {
-	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	ctx, _, keeper := createTestInput(t, false, 0)
 
 	// first add a candidate1 to delegate too
 	keeper.setCandidate(ctx, candidate1)
@@ -188,7 +188,7 @@ func TestBond(t *testing.T) {
 // TODO integrate in testing for equal validators, whichever one was a validator
 // first remains the validator https://github.com/cosmos/cosmos-sdk/issues/582
 func TestGetValidators(t *testing.T) {
-	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	ctx, _, keeper := createTestInput(t, false, 0)
 
 	// initialize some candidates into the state
 	amts := []int64{0, 100, 1, 400, 200}
@@ -292,7 +292,7 @@ func TestIsRecentValidator(t *testing.T) {
 }
 
 func TestParams(t *testing.T) {
-	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	ctx, _, keeper := createTestInput(t, false, 0)
 	expParams := defaultParams()
 
 	//check that the empty keeper loads the default
@@ -307,7 +307,7 @@ func TestParams(t *testing.T) {
 }
 
 func TestPool(t *testing.T) {
-	ctx, _, keeper := createTestInput(t, nil, false, 0)
+	ctx, _, keeper := createTestInput(t, false, 0)
 	expPool := initialPool()
 
 	//check that the empty keeper loads the default
