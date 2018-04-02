@@ -31,9 +31,22 @@ func FreeTCPAddr(t *testing.T) string {
 // setupViper creates a homedir to run inside,
 // and returns a cleanup function to defer
 func setupViper(t *testing.T) func() {
+	rootDir := initializeViper(t)
+	return func() {
+		cleanupViper(t, rootDir)()
+	}
+}
+
+// initializeViper creates a homedir to run inside
+func initializeViper(t *testing.T) string {
 	rootDir, err := ioutil.TempDir("", "mock-sdk-cmd")
 	require.Nil(t, err)
 	viper.Set(cli.HomeFlag, rootDir)
+	return rootDir
+}
+
+// cleanupViper cleans up a temporary homedir
+func cleanupViper(t *testing.T, rootDir string) func() {
 	return func() {
 		os.RemoveAll(rootDir)
 	}
